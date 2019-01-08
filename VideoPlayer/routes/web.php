@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/videos/{id}', function () {
+    return view('video');
+});
