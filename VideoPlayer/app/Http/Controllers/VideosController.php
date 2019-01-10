@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\video;
 
 class VideosController extends Controller
 {
@@ -45,7 +46,9 @@ class VideosController extends Controller
      */
     public function show($id)
     {
-        //
+        $video = video::find($id);
+
+        return view('video')->with(['video' => $video]);
     }
 
     /**

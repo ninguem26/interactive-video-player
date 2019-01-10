@@ -17,7 +17,7 @@ class CreateInteractionsTable extends Migration
             $table->increments('id');
             $table->integer('videoId');
             $table->string('type');
-            $table->time('time');
+            $table->integer('time');
             $table->dateTime('createdAt');
         });
     }

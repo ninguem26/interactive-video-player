@@ -15,6 +15,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/videos/{id}', function () {
-    return view('video');
-});
+Route::resource('videos', 'VideosController');
+Route::resource('interactions', 'InteractionsController');
