@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Interaction;
-use DB;
-use DateTime;
 
-class InteractionsController extends Controller
+class ContentsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -37,17 +34,7 @@ class InteractionsController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->data;
-
-        $interaction = new Interaction;
-
-        $interaction->videoId = $data['videoId'];
-        $interaction->type = $data['type'];
-        $interaction->time = $data['time'];
-        $interaction->createdAt = new DateTime;
-        $interaction->save();
-
-        return response()->json(['message'=> 'Interação salva']);
+        //
     }
 
     /**

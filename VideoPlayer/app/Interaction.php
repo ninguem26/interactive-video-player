@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class interaction extends Model
+class Interaction extends Model
 {
+    protected $table = 'interactions';
     public $timestamps = false;
 }
