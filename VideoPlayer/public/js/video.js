@@ -21,6 +21,8 @@ player.on('play', function() {
     submitToServer(interactionData);
 });
 
+console.log(player);
+
 player.on('pause', function() {
     var interactionData = setDataToSend("pause");
     submitToServer(interactionData);

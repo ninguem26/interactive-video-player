@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Video;
+use App\Content;
 
 class VideosController extends Controller
 {
@@ -19,7 +20,7 @@ class VideosController extends Controller
             $v->durationString = $this->secondsToTime($v->duration);
         }
 
-        return view('pages/index')->with(['videos' => $videos]);
+        return view('pages/videos/index')->with(['videos' => $videos]);
     }
 
     public function secondsToTime($seconds)
@@ -67,7 +68,7 @@ class VideosController extends Controller
     {
         $video = Video::find($id);
 
-        return view('pages/video')->with(['video' => $video]);
+        return view('pages/videos/show')->with(['video' => $video]);
     }
 
     /**
@@ -78,7 +79,9 @@ class VideosController extends Controller
      */
     public function edit($id)
     {
-        //
+        $video = Video::find($id);
+
+        return view('pages/videos/edit')->with(['video' => $video]);
     }
 
     /**

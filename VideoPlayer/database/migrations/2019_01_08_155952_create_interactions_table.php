@@ -19,6 +19,7 @@ class CreateInteractionsTable extends Migration
             $table->string('type');
             $table->integer('time');
             $table->dateTime('createdAt');
+            $table->foreign('videoId')->references('id')->on('videos')->onDelete('cascade');
         });
     }
 

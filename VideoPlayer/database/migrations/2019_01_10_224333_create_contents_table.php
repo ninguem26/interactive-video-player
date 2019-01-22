@@ -15,7 +15,11 @@ class CreateContentsTable extends Migration
     {
         Schema::create('contents', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('videoId');
+            $table->string('type');
+            $table->json('options');
             $table->timestamps();
+            $table->foreign('videoId')->references('id')->on('videos')->onDelete('cascade');
         });
     }
 

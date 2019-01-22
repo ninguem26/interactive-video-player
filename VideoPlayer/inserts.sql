@@ -15,3 +15,11 @@ INSERT INTO videos (title, url, format, duration, created_at, updated_at) VALUES
     NOW(),
     NOW()
 );
+
+INSERT INTO contents (videoId, type, options, created_at, updated_at) VALUES (
+    2,
+    'anotation',
+    '{"data": "Essa é uma anotação", "time": 3, "duration": 3}',
+    NOW(),
+    NOW()
+);
