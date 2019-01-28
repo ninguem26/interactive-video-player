@@ -5,6 +5,7 @@
 </head>
 
 @section('content')
+    <!--
     <div class="col-8 offset-2">
         <div class="card">
             <div class="card-body">
@@ -23,4 +24,9 @@
             </div>
         </div>
     </div>
+    -->
+    <div id="app">
+        <video-list></video-list>
+    </div>
+    <script type="text/javascript" src="js/app.js"></script>
 @stop
