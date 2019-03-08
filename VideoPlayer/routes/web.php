@@ -11,9 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::resource('videos', 'VideosController');
-Route::resource('interactions', 'InteractionsController');
+Route::get('/{any}', function(){
+    return view('index');
+})->where('any', '.*');

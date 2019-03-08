@@ -5,9 +5,7 @@
     </head>
     <body>
         <div class="container">
-            <div id="main" class="row">
-                @yield('content')
-            </div>
+            @yield('content')
         </div>
         @include('includes.footer')
     </body>

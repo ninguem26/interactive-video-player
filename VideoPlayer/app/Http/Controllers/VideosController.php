@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Video;
-use App\Content;
+use App\VideoContent;
 
 class VideosController extends Controller
 {

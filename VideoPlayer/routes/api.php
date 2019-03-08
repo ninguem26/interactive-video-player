@@ -21,8 +21,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('videos', 'API\VideosController');
 
 // Contents routes
-Route::apiResource('contents', 'API\ContentsController');
-Route::get('contents/videos/{id}', 'API\ContentsController@getByVideoId');
+Route::apiResource('video_contents', 'API\VideoContentsController');
+Route::get('video_contents/videos/{id}', 'API\VideoContentsController@getByVideoId');
+
+// Problems routes
+Route::apiResource('video_problems', 'API\VideoProblemsController');
 
 // Interactions routes
 Route::apiResource('interactions', 'API\InteractionsController');

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Interaction;
 use App\Http\Resources\Interaction as InteractionResource;
-use DB;
+use DateTime;
 
 class InteractionsController extends Controller
 {
@@ -32,10 +32,11 @@ class InteractionsController extends Controller
 
         $interaction = new Interaction;
 
-        $interaction->videoId = $data['videoId'];
+        $interaction->video_id = $data['videoId'];
         $interaction->type = $data['type'];
         $interaction->time = $data['time'];
-        $interaction->createdAt = $data['createdAt'];
+        $interaction->created_at = new DateTime;
+        $interaction->updated_at = new DateTime;
         $interaction->save();
 
         return response()->json(['message' => 'Interação salva']);

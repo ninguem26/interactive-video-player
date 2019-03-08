@@ -16,11 +16,12 @@ class Interaction extends JsonResource
     {
         return [
             'id' => $this->id,
-            'videoId' => $this->videoId,
+            'video_id' => $this->video_id,
             'type' => $this->type,
             'timeInSeconds' => $this->time,
             'timeString' => $this->getTimeString(),
-            'createdAt' => $this->createdAt
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

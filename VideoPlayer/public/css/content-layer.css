@@ -1,0 +1,14 @@
+.video-box{
+    position: relative;
+}
+.video-content-layer {
+    position: absolute;
+    float: left;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.video-content {
+    z-index: 3000000;
+}

@@ -41,10 +41,11 @@ class InteractionsController extends Controller
 
         $interaction = new Interaction;
 
-        $interaction->videoId = $data['videoId'];
+        $interaction->video_id = $data['videoId'];
         $interaction->type = $data['type'];
         $interaction->time = $data['time'];
-        $interaction->createdAt = new DateTime;
+        $interaction->created_at = new DateTime;
+        $interaction->updated_at = new DateTime;
         $interaction->save();
 
         return response()->json(['message'=> 'Interação salva']);

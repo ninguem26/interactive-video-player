@@ -15,11 +15,11 @@ class CreateInteractionsTable extends Migration
     {
         Schema::create('interactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('videoId');
+            $table->unsignedInteger('video_id');
             $table->string('type');
             $table->integer('time');
-            $table->dateTime('createdAt');
-            $table->foreign('videoId')->references('id')->on('videos')->onDelete('cascade');
+            $table->timestamps();
+            $table->foreign('video_id')->references('id')->on('videos')->onDelete('cascade');
         });
     }
 

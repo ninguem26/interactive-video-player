@@ -30,8 +30,7 @@
         },
         methods: {
             read() {
-                window.axios.get('/api/videos').then(({ data }) => {
-                    console.log(data['data']);
+                this.$http.get('/api/videos').then(({ data }) => {
                     data['data'].forEach(video => {
                         this.videos.push(new Video(video));
                     });
@@ -39,7 +38,7 @@
             }
         },
         created() {
-          this.read();
+            this.read();
         }
     }
 </script>

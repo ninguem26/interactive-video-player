@@ -22,5 +22,14 @@
         "sass-loader": "^7.1.0",
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.5.22"
+    },
+    "dependencies": {
+        "@vue/cli": "^3.4.1",
+        "mediaelement": "^4.2.9",
+        "plyr": "^3.5.0",
+        "video.js": "^7.4.1",
+        "vue-axios": "^2.1.4",
+        "vue-resource": "^1.5.1",
+        "vue-router": "^3.0.2"
     }
 }

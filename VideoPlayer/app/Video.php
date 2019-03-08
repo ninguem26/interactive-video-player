@@ -10,7 +10,7 @@ class Video extends Model
 
     public function contents()
     {
-        return $this->hasMany('App\Content', 'videoId');
+        return $this->hasMany('App\VideoContent', 'video_id');
     }
 
     public function getDurationString()

@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Content as ContentResource;
 
 class Video extends JsonResource
 {
@@ -22,8 +21,9 @@ class Video extends JsonResource
             'format' => $this->format,
             'durationInSeconds' => $this->duration,
             'durationString' => $this->getDurationString(),
-            'contents' => ContentResource::collection($this->contents),
-            'createdAt' => $this->created_at
+            'contents' => $this->contents,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

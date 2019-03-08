@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Video;
 use App\Http\Resources\Video as VideoResource;
+use DateTime;
 use DB;
 
 class VideosController extends Controller
