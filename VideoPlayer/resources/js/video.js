@@ -45,13 +45,27 @@ export function init(playerId, receivedVideoId) {
     });
 
     player.on('enterfullscreen', function() {
-
         var interactionData = setDataToSend("enterfullscreen");
         submitToServer(interactionData);
     });
 
     player.on('exitfullscreen', function() {
         var interactionData = setDataToSend("exitfullscreen");
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('alternativeselected', function() {
+        var interactionData = setDataToSend("alternativeselected");
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('submitanswer', function() {
+        var interactionData = setDataToSend("submitanswer");
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('skipquestion', function() {
+        var interactionData = setDataToSend("skipquestion");
         submitToServer(interactionData);
     });
 }

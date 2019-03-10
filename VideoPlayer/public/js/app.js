@@ -1921,25 +1921,42 @@ function Alternative(id, text) {
       return parseInt(this.content.startAt) + parseInt(this.content.duration);
     },
     dataToSend: function dataToSend() {
-      return {
-        video_id: this.$parent.id,
-        type: this.content.type,
-        options: {
-          start_at: this.content.startAt,
-          duration: this.content.duration,
-          obligatory: this.problem.obligatory
-        },
-        problem_type: this.problem.type,
-        question: this.problem.question,
-        alternatives: this.problem.alternatives,
-        answers: this.problem.answer
-      };
+      if (this.content.type == 'problem') {
+        return {
+          video_id: this.$parent.id,
+          type: this.content.type,
+          options: {
+            start_at: this.content.startAt,
+            duration: this.content.duration,
+            obligatory: this.problem.obligatory
+          },
+          problem_type: this.problem.type,
+          question: this.problem.question,
+          alternatives: this.problem.alternatives,
+          answers: this.problem.answer
+        };
+      } else if (this.content.type == 'anotation') {
+        return {
+          video_id: this.$parent.id,
+          type: this.content.type,
+          options: {
+            start_at: this.content.startAt,
+            duration: this.content.duration
+          },
+          text: this.anotation.text
+        };
+      }
     },
     confirm: function confirm() {
       var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 
       if (this.content.type == 'problem') {
         this.$http.post('/api/video_problems', {
+          data: this.dataToSend(),
+          _token: CSRF_TOKEN
+        }).then(function (response) {});
+      } else if (this.content.type == 'anotation') {
+        this.$http.post('/api/anotations', {
           data: this.dataToSend(),
           _token: CSRF_TOKEN
         }).then(function (response) {});
@@ -2021,6 +2038,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['id', 'video_id', 'type', 'options', 'data'],
   data: function data() {
@@ -2031,7 +2055,12 @@ __webpack_require__.r(__webpack_exports__);
       correct: false,
       alternatives: [],
       selectedAlternative: 0,
-      interacted: false
+      interacted: false,
+      events: {
+        alternativeSelect: new CustomEvent('alternativeselected'),
+        submitAnswer: new CustomEvent('submitanswer'),
+        skipQuestion: new CustomEvent('skipquestion')
+      }
     };
   },
   computed: {
@@ -2039,6 +2068,11 @@ __webpack_require__.r(__webpack_exports__);
       var optionData = JSON.parse(this.options);
       this.canShow();
       return this.type == 'problem' && this.$parent.currentTime >= optionData.start_at && !this.interacted && this.canShowQuestion;
+    },
+    anotation: function anotation() {
+      var optionData = JSON.parse(this.options);
+      this.canShow();
+      return this.type == 'anotation' && this.$parent.currentTime >= optionData.start_at && this.$parent.currentTime <= parseInt(optionData.start_at) + parseInt(optionData.duration);
     }
   },
   watch: {
@@ -2058,6 +2092,16 @@ __webpack_require__.r(__webpack_exports__);
         this.canShowQuestion = true;
       }
     },
+    dataToSend: function dataToSend() {
+      return {
+        video_problem_id: this.id,
+        answer: {
+          selected: this.selectedAlternative
+        },
+        expected_answer: JSON.parse(this.data.answers),
+        is_correct: this.correct
+      };
+    },
     submitAnswer: function submitAnswer() {
       var answer = JSON.parse(this.data.answers);
 
@@ -2067,9 +2111,14 @@ __webpack_require__.r(__webpack_exports__);
         this.correct = false;
       }
 
-      console.log(this.problem);
+      var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+      this.$http.post('/api/video_answers', {
+        data: this.dataToSend(),
+        _token: CSRF_TOKEN
+      }).then(function (response) {});
       this.answered = true;
       this.canSkip = true;
+      document.dispatchEvent(this.events.submitAnswer);
     },
     skipQuestion: function skipQuestion() {
       if (this.correct) {
@@ -2077,12 +2126,18 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.canShowQuestion = false;
+      document.dispatchEvent(this.events.skipQuestion);
+    },
+    emitSelection: function emitSelection() {
+      document.dispatchEvent(this.events.alternativeSelect);
     }
   },
   created: function created() {
-    this.alternatives = JSON.parse(this.data.alternatives);
-    var options = JSON.parse(this.options);
-    this.canSkip = !options.obligatory;
+    if (this.type == 'problem') {
+      this.alternatives = JSON.parse(this.data.alternatives);
+      var options = JSON.parse(this.options);
+      this.canSkip = !options.obligatory;
+    }
   }
 });
 
@@ -2257,7 +2312,6 @@ function Content(content) {
         data['data'].forEach(function (content) {
           _this.contents.push(new Content(content));
         });
-        console.log(_this.contents);
       });
     },
     setCurrentTime: function setCurrentTime(time) {
@@ -3611,6 +3665,9 @@ var render = function() {
                         checked: _vm._q(_vm.selectedAlternative, alternative.id)
                       },
                       on: {
+                        click: function($event) {
+                          _vm.emitSelection()
+                        },
                         change: function($event) {
                           _vm.selectedAlternative = alternative.id
                         }
@@ -3661,7 +3718,15 @@ var render = function() {
           ])
         ])
       ])
-    : _vm._e()
+    : _vm.anotation
+      ? _c("div", { staticClass: "video-content" }, [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _vm._v("\n            " + _vm._s(_vm.data.text) + "\n        ")
+            ])
+          ])
+        ])
+      : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -18387,6 +18452,18 @@ function init(playerId, receivedVideoId) {
   });
   player.on('exitfullscreen', function () {
     var interactionData = setDataToSend("exitfullscreen");
+    submitToServer(interactionData);
+  });
+  document.addEventListener('alternativeselected', function () {
+    var interactionData = setDataToSend("alternativeselected");
+    submitToServer(interactionData);
+  });
+  document.addEventListener('submitanswer', function () {
+    var interactionData = setDataToSend("submitanswer");
+    submitToServer(interactionData);
+  });
+  document.addEventListener('skipquestion', function () {
+    var interactionData = setDataToSend("skipquestion");
     submitToServer(interactionData);
   });
 }

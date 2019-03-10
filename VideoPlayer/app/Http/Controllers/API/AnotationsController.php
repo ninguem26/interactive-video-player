@@ -5,11 +5,11 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\VideoContent;
-use App\VideoProblem;
-use App\Http\Resources\VideoProblem as VideoProblemResource;
+use App\Anotation;
+use App\Http\Resources\Anotation as AnotationResource;
 use DateTime;
 
-class VideoProblemsController extends Controller
+class AnotationsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +18,7 @@ class VideoProblemsController extends Controller
      */
     public function index()
     {
-        return VideoProblemResource::collection(VideoProblem::all());
+        return AnotationResource::collection(Anotation::all());
     }
 
     /**
@@ -40,18 +40,15 @@ class VideoProblemsController extends Controller
         $content->updated_at = new DateTime;
         $content->save();
 
-        $problem = new VideoProblem;
+        $anotation = new Anotation;
 
-        $problem->video_content_id = $content->id;
-        $problem->type = $data['problem_type'];
-        $problem->question = $data['question'];
-        $problem->alternatives = json_encode($data['alternatives']);
-        $problem->answers = json_encode($data['answers']);
-        $problem->created_at = new DateTime;
-        $problem->updated_at = new DateTime;
-        $problem->save();
-
-        return response()->json(['message' => 'Problema cadastrado']);
+        $anotation->video_content_id = $content->id;
+        $anotation->text = $data['text'];
+        $anotation->created_at = new DateTime;
+        $anotation->updated_at = new DateTime;
+        $anotation->save();
+        
+        return response()->json(['message' => 'Anotação cadastrada']);
     }
 
     /**
@@ -62,7 +59,7 @@ class VideoProblemsController extends Controller
      */
     public function show($id)
     {
-        return new VideoProblemResource(Problem::find($id));
+        return new AnotationResource(Anotation::find($id));
     }
 
     /**
@@ -76,15 +73,13 @@ class VideoProblemsController extends Controller
     {
         $data = $request->data;
 
-        $problem = new VideoProblem;
+        $anotation = new Anotation;
 
-        $problem->question = $data['question'];
-        $problem->alternatives = $data['alternatives'];
-        $problem->answers = $data['answers'];
-        $content->updated_at = new DateTime;
-        $problem->save();
+        $anotation->text = $data['text'];
+        $anotation->updated_at = new DateTime;
+        $anotation->save();
 
-        return response()->json(['message' => 'Problema atualizado']);
+        return response()->json(['message' => 'Anotação atualizada']);
     }
 
     /**
@@ -95,8 +90,8 @@ class VideoProblemsController extends Controller
      */
     public function destroy($id)
     {
-        VideoProblem::destroy($id);
+        Anotation::destroy($id);
 
-        return response()->json(['message' => 'Problema excluído']);
+        return response()->json(['message' => 'Anotação excluída']);
     }
 }

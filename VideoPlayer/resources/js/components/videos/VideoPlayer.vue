@@ -48,7 +48,6 @@
                     data['data'].forEach(content => {
                         this.contents.push(new Content(content));
                     });
-                    console.log(this.contents);
                 });
             },
             setCurrentTime(time) {

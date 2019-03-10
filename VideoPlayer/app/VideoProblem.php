@@ -12,4 +12,9 @@ class VideoProblem extends Model
     {
         return $this->belongsTo('App\VideoContent', 'video_content_id');
     }
+
+    public function video_answers()
+    {
+        return $this->hasMany('App\VideoAnswer', 'video_problem_id');
+    }
 }

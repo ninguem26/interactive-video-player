@@ -131,18 +131,30 @@
                 return parseInt(this.content.startAt) + parseInt(this.content.duration);
             },
             dataToSend() {
-                return {
-                    video_id: this.$parent.id,
-                    type: this.content.type,
-                    options: {
-                        start_at: this.content.startAt,
-                        duration: this.content.duration,
-                        obligatory: this.problem.obligatory
-                    },
-                    problem_type: this.problem.type,
-                    question: this.problem.question,
-                    alternatives: this.problem.alternatives,
-                    answers: this.problem.answer
+                if(this.content.type == 'problem') {
+                    return {
+                        video_id: this.$parent.id,
+                        type: this.content.type,
+                        options: {
+                            start_at: this.content.startAt,
+                            duration: this.content.duration,
+                            obligatory: this.problem.obligatory
+                        },
+                        problem_type: this.problem.type,
+                        question: this.problem.question,
+                        alternatives: this.problem.alternatives,
+                        answers: this.problem.answer
+                    }
+                } else if(this.content.type == 'anotation') {
+                    return {
+                        video_id: this.$parent.id,
+                        type: this.content.type,
+                        options: {
+                            start_at: this.content.startAt,
+                            duration: this.content.duration,
+                        },
+                        text: this.anotation.text
+                    }
                 }
             },
             confirm() {
@@ -150,6 +162,11 @@
 
                 if(this.content.type == 'problem') {
                     this.$http.post('/api/video_problems', {
+                        data: this.dataToSend(),
+                        _token: CSRF_TOKEN
+                    }).then(function (response) {});
+                }else if(this.content.type == 'anotation') {
+                    this.$http.post('/api/anotations', {
                         data: this.dataToSend(),
                         _token: CSRF_TOKEN
                     }).then(function (response) {});

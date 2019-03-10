@@ -11,6 +11,8 @@ class VideoContent extends Model
     public function data() {
         if($this->type == 'problem'){
             return $this->hasOne('App\VideoProblem');
+        }elseif($this->type == 'anotation'){
+            return $this->hasOne('App\Anotation');
         }
         return null;
     }

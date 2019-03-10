@@ -26,6 +26,10 @@ Route::get('video_contents/videos/{id}', 'API\VideoContentsController@getByVideo
 
 // Problems routes
 Route::apiResource('video_problems', 'API\VideoProblemsController');
+Route::apiResource('video_answers', 'API\VideoAnswersController');
+
+// Anotations routes
+Route::apiResource('anotations', 'API\AnotationsController');
 
 // Interactions routes
 Route::apiResource('interactions', 'API\InteractionsController');

@@ -15,7 +15,7 @@
                 </div>
                 <div v-for="alternative in alternatives" style="overflow: auto">
                     <div class="form-check">
-                        <input v-model="selectedAlternative" class="form-check-input" type="radio" name="alternative" :id="'alternative-' + alternative.id" :value="alternative.id">
+                        <input v-model="selectedAlternative" @click="emitSelection()" class="form-check-input" type="radio" name="alternative" :id="'alternative-' + alternative.id" :value="alternative.id">
                         <label class="form-check-label" :for="'alternative-' + alternative.id">
                             {{ alternative.text }}
                         </label>
@@ -32,6 +32,13 @@
             </div>
         </div>
     </div>
+    <div v-else-if="anotation" class="video-content">
+        <div class="card">
+            <div class="card-body">
+                {{ data.text }}
+            </div>
+        </div>
+    </div>
 </template>
 <script>
     export default {
@@ -44,7 +51,12 @@
                 correct: false,
                 alternatives: [],
                 selectedAlternative: 0,
-                interacted: false
+                interacted: false,
+                events: {
+                    alternativeSelect: new CustomEvent('alternativeselected'),
+                    submitAnswer: new CustomEvent('submitanswer'),
+                    skipQuestion: new CustomEvent('skipquestion')
+                }
             }
         },
         computed: {
@@ -52,6 +64,11 @@
                 var optionData = JSON.parse(this.options);
                 this.canShow();
                 return this.type == 'problem' && this.$parent.currentTime >= optionData.start_at && !this.interacted && this.canShowQuestion;
+            },
+            anotation: function () {
+                var optionData = JSON.parse(this.options);
+                this.canShow();
+                return this.type == 'anotation' && (this.$parent.currentTime >= optionData.start_at && this.$parent.currentTime <= parseInt(optionData.start_at) + parseInt(optionData.duration));
             },
         },
         watch: {
@@ -70,6 +87,16 @@
                     this.canShowQuestion = true;
                 }
             },
+            dataToSend() {
+                return {
+                    video_problem_id: this.id,
+                    answer: {
+                        selected: this.selectedAlternative
+                    },
+                    expected_answer: JSON.parse(this.data.answers),
+                    is_correct: this.correct
+                }
+            },
             submitAnswer() {
                 var answer = JSON.parse(this.data.answers);
                 if(this.selectedAlternative == answer) {
@@ -77,22 +104,38 @@
                 } else {
                     this.correct = false;
                 }
-                console.log(this.problem);
+
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+                this.$http.post('/api/video_answers', {
+                    data: this.dataToSend(),
+                    _token: CSRF_TOKEN
+                }).then(function (response) {});
+
                 this.answered = true;
                 this.canSkip = true;
+
+                document.dispatchEvent(this.events.submitAnswer);
             },
             skipQuestion () {
                 if(this.correct) {
                     this.interacted = true;
                 }
                 this.canShowQuestion = false;
+
+                document.dispatchEvent(this.events.skipQuestion);
+            },
+            emitSelection() {
+                document.dispatchEvent(this.events.alternativeSelect);
             }
         },
         created() {
-            this.alternatives = JSON.parse(this.data.alternatives);
+            if(this.type == 'problem') {
+                this.alternatives = JSON.parse(this.data.alternatives);
 
-            var options = JSON.parse(this.options);
-            this.canSkip = !options.obligatory;
+                var options = JSON.parse(this.options);
+                this.canSkip = !options.obligatory;
+            }
         }
     }
 </script>
