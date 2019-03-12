@@ -35,11 +35,12 @@ class InteractionsController extends Controller
         $interaction->video_id = $data['videoId'];
         $interaction->type = $data['type'];
         $interaction->time = $data['time'];
+        $interaction->data = json_encode($data['data']);
         $interaction->created_at = new DateTime;
         $interaction->updated_at = new DateTime;
         $interaction->save();
 
-        return response()->json(['message' => 'Interação salva']);
+        return response()->json(['message' => 'Interação salva', 'data' => $data]);
     }
 
     /**
@@ -74,6 +75,7 @@ class InteractionsController extends Controller
         $interaction->videoId = $data['videoId'];
         $interaction->type = $data['type'];
         $interaction->time = $data['time'];
+        $interaction->data = json_encode($data['data']);
         $interaction->save();
 
         return response()->json(['message' => 'Interação atualizada']);

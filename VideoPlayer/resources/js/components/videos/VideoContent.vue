@@ -15,7 +15,7 @@
                 </div>
                 <div v-for="alternative in alternatives" style="overflow: auto">
                     <div class="form-check">
-                        <input v-model="selectedAlternative" @click="emitSelection()" class="form-check-input" type="radio" name="alternative" :id="'alternative-' + alternative.id" :value="alternative.id">
+                        <input v-model="selectedAlternative" @click="emitSelection(alternative.id)" class="form-check-input" type="radio" name="alternative" :id="'alternative-' + alternative.id" :value="alternative.id">
                         <label class="form-check-label" :for="'alternative-' + alternative.id">
                             {{ alternative.text }}
                         </label>
@@ -53,7 +53,6 @@
                 selectedAlternative: 0,
                 interacted: false,
                 events: {
-                    alternativeSelect: new CustomEvent('alternativeselected'),
                     submitAnswer: new CustomEvent('submitanswer'),
                     skipQuestion: new CustomEvent('skipquestion')
                 }
@@ -125,8 +124,13 @@
 
                 document.dispatchEvent(this.events.skipQuestion);
             },
-            emitSelection() {
-                document.dispatchEvent(this.events.alternativeSelect);
+            emitSelection(value) {
+                var alternativeSelect = new CustomEvent('alternativeselected', {
+                    detail: {
+                        alternative: value
+                    }
+                });
+                document.dispatchEvent(alternativeSelect);
             }
         },
         created() {

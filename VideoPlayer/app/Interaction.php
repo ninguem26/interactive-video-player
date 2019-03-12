@@ -8,6 +8,11 @@ class Interaction extends Model
 {
     protected $table = 'interactions';
 
+    public function video()
+    {
+        return $this->belongsTo('App\Video');
+    }
+
     public function getTimeString()
     {
         $seconds = $this->time;
