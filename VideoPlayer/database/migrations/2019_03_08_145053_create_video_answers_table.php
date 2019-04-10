@@ -20,6 +20,7 @@ class CreateVideoAnswersTable extends Migration
             $table->json('expected_answer');
             $table->boolean('is_correct');
             $table->timestamps();
+            $table->foreign('video_problem_id')->references('id')->on('video_problems')->onDelete('cascade');
         });
     }
 

@@ -6,13 +6,19 @@ export var player = null;
 var elem = null;
 var interactionData = new Array();
 var videoId = 0;
+var sessionId = 0;
 var fullScreen = false;
 var mousePos = {x: 0, y: 0};
 var ended = false;
 
-export function init(playerId, receivedVideoId) {
-    player = new Plyr(playerId);
+export function init(playerId, receivedVideoId, receivedSessionId) {
+    player = new Plyr(playerId, {
+        fullscreen: {
+            enabled: false
+        }
+    });
     videoId = receivedVideoId;
+    sessionId = receivedSessionId;
 
     elem = document.getElementById("canvas");
     elem.onmousemove = findObjectCoords;
@@ -175,6 +181,56 @@ export function init(playerId, receivedVideoId) {
         var interactionData = setDataToSend(interaction, data);
         submitToServer(interactionData);
     });
+
+    document.addEventListener('showanotation', function() {
+        var data = { mousePos: { x: mousePos.x, y: mousePos.y } };
+        var interaction = "showanotation";
+
+        var interactionData = setDataToSend(interaction, data);
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('hideanotation', function() {
+        var data = { mousePos: { x: mousePos.x, y: mousePos.y } };
+        var interaction = "hideanotation";
+
+        var interactionData = setDataToSend(interaction, data);
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('dismissanotation', function(e) {
+        var data = {
+            content_id: e.detail.content_id,
+            anotation_id: e.detail.anotation_id,
+            mousePos: { x: mousePos.x, y: mousePos.y }
+        };
+        var interaction = "dismissanotation";
+
+        var interactionData = setDataToSend(interaction, data);
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('entermark', function(e) {
+        var data = {
+            video_mark_id: e.detail.video_mark_id,
+            mousePos: { x: mousePos.x, y: mousePos.y }
+        };
+        var interaction = "entermark";
+
+        var interactionData = setDataToSend(interaction, data);
+        submitToServer(interactionData);
+    });
+
+    document.addEventListener('jumptomark', function(e) {
+        var data = {
+            video_mark_id: e.detail.video_mark_id,
+            mousePos: { x: mousePos.x, y: mousePos.y }
+        };
+        var interaction = "jumptomark";
+
+        var interactionData = setDataToSend(interaction, data);
+        submitToServer(interactionData);
+    });
 }
 
 function findObjectCoords(mouseEvent)
@@ -207,6 +263,7 @@ function findObjectCoords(mouseEvent)
 
 function setDataToSend(interactionType, eventData){
     return {
+        sessionId: sessionId,
         videoId: videoId,
         type: interactionType,
         time: player.currentTime,

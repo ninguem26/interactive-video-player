@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Interaction;
 use App\Http\Resources\Interaction as InteractionResource;
+use App\Session;
 use DateTime;
 
 class InteractionsController extends Controller
@@ -30,8 +31,11 @@ class InteractionsController extends Controller
     {
         $data = $request->data;
 
+        $session = Session::where('session_id', $data['sessionId'])->first();
+
         $interaction = new Interaction;
 
+        $interaction->session_id = $session->id;
         $interaction->video_id = $data['videoId'];
         $interaction->type = $data['type'];
         $interaction->time = $data['time'];

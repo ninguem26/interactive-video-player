@@ -16,11 +16,13 @@ class CreateInteractionsTable extends Migration
         Schema::create('interactions', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('video_id');
+            $table->unsignedInteger('session_id');
             $table->string('type');
             $table->integer('time');
             $table->json('data');
             $table->timestamps();
             $table->foreign('video_id')->references('id')->on('videos')->onDelete('cascade');
+            $table->foreign('session_id')->references('id')->on('sessions')->onDelete('cascade');
         });
     }
 

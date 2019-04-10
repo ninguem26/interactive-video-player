@@ -1,13 +1,21 @@
 <template>
     <div>
         <video-player
-            v-if="loaded"
-            :id="video.id"
-            :title="video.title"
-            :url="video.url"
-            :format="video.format"
-            :duration="video.duration"
+                v-if="loaded"
+                :id="video.id"
+                :title="video.title"
+                :url="video.url"
+                :format="video.format"
+                :duration="video.duration"
         ></video-player>
+        <video-editor
+                v-if="loaded"
+                :id="video.id"
+                :title="video.title"
+                :url="video.url"
+                :format="video.format"
+                :duration="video.duration"
+        ></video-editor>
     </div>
 </template>
 <script>

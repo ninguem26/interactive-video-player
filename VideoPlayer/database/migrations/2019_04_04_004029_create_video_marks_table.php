@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAnotationsTable extends Migration
+class CreateVideoMarksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateAnotationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('anotations', function (Blueprint $table) {
+        Schema::create('video_marks', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('video_content_id');
-            $table->string('text');
+            $table->string('title');
             $table->timestamps();
             $table->foreign('video_content_id')->references('id')->on('video_contents')->onDelete('cascade');
         });
@@ -29,6 +29,6 @@ class CreateAnotationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('anotations');
+        Schema::dropIfExists('video_marks');
     }
 }

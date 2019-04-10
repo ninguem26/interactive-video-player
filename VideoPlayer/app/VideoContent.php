@@ -13,6 +13,8 @@ class VideoContent extends Model
             return $this->hasOne('App\VideoProblem');
         }elseif($this->type == 'anotation'){
             return $this->hasOne('App\Anotation');
+        }elseif($this->type == 'mark'){
+            return $this->hasOne('App\VideoMark');
         }
         return null;
     }

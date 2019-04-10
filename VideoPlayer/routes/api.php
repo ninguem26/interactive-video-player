@@ -31,6 +31,12 @@ Route::apiResource('video_answers', 'API\VideoAnswersController');
 // Anotations routes
 Route::apiResource('anotations', 'API\AnotationsController');
 
+// Marks routes
+Route::apiResource('marks', 'API\VideoMarksController');
+
 // Interactions routes
 Route::apiResource('interactions', 'API\InteractionsController');
 Route::get('interactions/videos/{id}', 'API\InteractionsController@getByVideoId');
+
+// Session routes
+Route::apiResource('session', 'API\SessionController');

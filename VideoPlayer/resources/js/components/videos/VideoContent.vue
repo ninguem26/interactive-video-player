@@ -36,6 +36,9 @@
         <div class="card">
             <div class="card-body">
                 {{ data.text }}
+                <button @click="dismiss" type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         </div>
     </div>
@@ -45,6 +48,7 @@
         props: ['id', 'video_id', 'type', 'options', 'data'],
         data() {
             return {
+                active: true,
                 canShowQuestion: true,
                 canSkip: false,
                 answered: false,
@@ -54,7 +58,9 @@
                 interacted: false,
                 events: {
                     submitAnswer: new CustomEvent('submitanswer'),
-                    skipQuestion: new CustomEvent('skipquestion')
+                    skipQuestion: new CustomEvent('skipquestion'),
+                    showAnotation: new CustomEvent('showanotation'),
+                    hideAnotation: new CustomEvent('hideanotation')
                 }
             }
         },
@@ -62,13 +68,16 @@
             problem: function () {
                 var optionData = JSON.parse(this.options);
                 this.canShow();
-                return this.type == 'problem' && this.$parent.currentTime >= optionData.start_at && !this.interacted && this.canShowQuestion;
+                return this.type == 'problem' && this.$parent.currentTime >= parseInt(optionData.start_at) && this.$parent.currentTime <= parseInt(optionData.start_at) + 0.5 && !this.interacted && this.canShowQuestion;
             },
             anotation: function () {
                 var optionData = JSON.parse(this.options);
                 this.canShow();
-                return this.type == 'anotation' && (this.$parent.currentTime >= optionData.start_at && this.$parent.currentTime <= parseInt(optionData.start_at) + parseInt(optionData.duration));
+                return this.active && this.type == 'anotation' && (this.$parent.currentTime >= optionData.start_at && this.$parent.currentTime <= parseInt(optionData.start_at) + parseInt(optionData.duration));
             },
+            mark: function () {
+                return this.$parent.markByTime(this.$parent.currentTime) == this.id;
+            }
         },
         watch: {
             problem: function () {
@@ -76,6 +85,25 @@
                     this.$parent.pause();
                 } else if(this.$parent.isPaused()) {
                     this.$parent.play();
+                }
+            },
+            anotation: function () {
+                if(this.anotation) {
+                    document.dispatchEvent(this.events.showAnotation);
+                } else {
+                    document.dispatchEvent(this.events.hideAnotation);
+                }
+            },
+            mark: function () {
+                if(this.mark) {
+                    this.$parent.actualMark = this.id;
+                    console.log(this.id);
+                    var enterMark = new CustomEvent('entermark', {
+                        detail: {
+                            video_mark_id: this.id
+                        }
+                    });
+                    document.dispatchEvent(enterMark);
                 }
             }
         },
@@ -88,7 +116,7 @@
             },
             dataToSend() {
                 return {
-                    video_problem_id: this.id,
+                    video_problem_id: this.data.id,
                     answer: {
                         selected: this.selectedAlternative
                     },
@@ -131,6 +159,17 @@
                     }
                 });
                 document.dispatchEvent(alternativeSelect);
+            },
+            dismiss() {
+                var dismissAnotation = new CustomEvent('dismissanotation', {
+                    detail: {
+                        content_id: this.id,
+                        anotation_id: this.data.id
+                    }
+                });
+
+                this.active = false;
+                document.dispatchEvent(dismissAnotation);
             }
         },
         created() {

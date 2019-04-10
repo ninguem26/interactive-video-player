@@ -5,7 +5,7 @@
                 <div v-if="content.type == ''" class="card-body">
                     <button @click="setContentType('anotation')"class="btn btn-primary btn-block">Anotação</button>
                     <button @click="setContentType('problem')"class="btn btn-primary btn-block">Problema</button>
-                    <button @click="setContentType('tag')"class="btn btn-primary btn-block">Tag</button>
+                    <button @click="setContentType('mark')"class="btn btn-primary btn-block">Marcação</button>
                 </div>
                 <div v-else-if="content.type == 'problem'" class="card-body">
                     <div v-if="problem.type == ''">
@@ -47,6 +47,16 @@
                         Confirmar
                     </button>
                 </div>
+                <div v-else-if="content.type == 'mark'" class="card-body">
+                    <h5 class="card-title">Marcação</h5>
+                    <label for="title">Título</label>
+                    <input v-model="mark.title" type="text" class="form-control" id="title" placeholder="Marcação...">
+                    <label for="start_at">A partir de</label>
+                    <input v-model="content.startAt" type="number" min="0" class="form-control" id="start_at" placeholder="Digite o tempo">
+                    <button @click="confirm" class="btn btn-outline-primary btn-block">
+                        Confirmar
+                    </button>
+                </div>
             </div>
             <div v-else>
                 <div v-if="content.type == 'problem'">
@@ -83,6 +93,13 @@
                         <p class="card-text">{{ anotation.text }}</p>
                     </div>
                 </div>
+                <div v-else-if="content.type == 'mark'">
+                    <div class="card-body">
+                        <h5 class="card-title">Marcação</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ content.startAt }}</h6>
+                        <p class="card-text">{{ mark.title }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -111,6 +128,9 @@
                 },
                 anotation: {
                     text: ""
+                },
+                mark: {
+                    title: ""
                 },
                 count: 1,
                 confirmed: false,
@@ -155,6 +175,15 @@
                         },
                         text: this.anotation.text
                     }
+                } else if(this.content.type == 'mark') {
+                    return {
+                        video_id: this.$parent.id,
+                        type: this.content.type,
+                        options: {
+                            start_at: this.content.startAt,
+                        },
+                        title: this.mark.title
+                    }
                 }
             },
             confirm() {
@@ -165,8 +194,13 @@
                         data: this.dataToSend(),
                         _token: CSRF_TOKEN
                     }).then(function (response) {});
-                }else if(this.content.type == 'anotation') {
+                } else if(this.content.type == 'anotation') {
                     this.$http.post('/api/anotations', {
+                        data: this.dataToSend(),
+                        _token: CSRF_TOKEN
+                    }).then(function (response) {});
+                } else if(this.content.type == 'mark') {
+                    this.$http.post('/api/marks', {
                         data: this.dataToSend(),
                         _token: CSRF_TOKEN
                     }).then(function (response) {});
