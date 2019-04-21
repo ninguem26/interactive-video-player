@@ -68,7 +68,7 @@ export function init(playerId, receivedVideoId, receivedSessionId) {
     });
 
     player.on('volumechange', function() {
-        var interactionData = setDataToSend("volumeChange", {
+        var interactionData = setDataToSend("volumechange", {
             mousePos: {
                 x: mousePos.x,
                 y: mousePos.y

@@ -1,39 +1,44 @@
 <template>
     <div v-if="problem" class="col-md-12 video-content">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">{{ data.question }}</h5>
-            </div>
-            <div class="card-body">
-                <div v-if="answered">
-                    <div v-if="correct" class="alert alert-success" role="alert">
-                        Resposta correta!
+        <div class="card card-body" :style="backStyle">
+            <div class="card" :style="frontStyle">
+                <div class="card-header">
+                    <h5 class="card-title">{{ data.question }}</h5>
+                </div>
+                <div class="card-body">
+                    <div v-if="answered">
+                        <div v-if="correct && JSON.parse(this.data.answers) > this.alternatives.length" class="alert alert-warning" role="alert">
+                            Obrigado por nos dar sua opinião!
+                        </div>
+                        <div v-else-if="correct" class="alert alert-success" role="alert">
+                            Resposta correta!
+                        </div>
+                        <div v-else class="alert alert-danger" role="alert">
+                            Resposta incorreta!
+                        </div>
                     </div>
-                    <div v-else class="alert alert-danger" role="alert">
-                        Resposta incorreta!
+                    <div v-for="alternative in alternatives" style="overflow: auto">
+                        <div class="form-check">
+                            <input v-model="selectedAlternative" @click="emitSelection(alternative.id)" class="form-check-input" type="radio" name="alternative" :id="'alternative-' + alternative.id" :value="alternative.id">
+                            <label class="form-check-label" :for="'alternative-' + alternative.id">
+                                {{ alternative.text }}
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div v-for="alternative in alternatives" style="overflow: auto">
-                    <div class="form-check">
-                        <input v-model="selectedAlternative" @click="emitSelection(alternative.id)" class="form-check-input" type="radio" name="alternative" :id="'alternative-' + alternative.id" :value="alternative.id">
-                        <label class="form-check-label" :for="'alternative-' + alternative.id">
-                            {{ alternative.text }}
-                        </label>
-                    </div>
+                <div class="card-footer">
+                    <button @click="submitAnswer" class="btn btn-success" :disabled="selectedAlternative == 0">
+                        Responder
+                    </button>
+                    <button @click="skipQuestion" class="btn btn-warning" :disabled="!canSkip">
+                        <i class="fa fa-play"></i> Continuar
+                    </button>
                 </div>
-            </div>
-            <div class="card-footer">
-                <button @click="submitAnswer" class="btn btn-success" :disabled="selectedAlternative == 0">
-                    Responder
-                </button>
-                <button @click="skipQuestion" class="btn btn-warning" :disabled="!canSkip">
-                    <i class="fa fa-play"></i>
-                </button>
             </div>
         </div>
     </div>
     <div v-else-if="anotation" class="video-content">
-        <div class="card">
+        <div class="card" style="background-color: #FFD93C;">
             <div class="card-body">
                 {{ data.text }}
                 <button @click="dismiss" type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -61,6 +66,12 @@
                     skipQuestion: new CustomEvent('skipquestion'),
                     showAnotation: new CustomEvent('showanotation'),
                     hideAnotation: new CustomEvent('hideanotation')
+                },
+                backStyle: {
+                    height: 600 + 'px',
+                },
+                frontStyle: {
+                    'margin-top': 140 + 'px',
                 }
             }
         },
@@ -126,10 +137,15 @@
             },
             submitAnswer() {
                 var answer = JSON.parse(this.data.answers);
-                if(this.selectedAlternative == answer) {
+                if(answer > this.alternatives.length) {
                     this.correct = true;
                 } else {
-                    this.correct = false;
+                    console.log("AAA")
+                    if(this.selectedAlternative == answer) {
+                        this.correct = true;
+                    } else {
+                        this.correct = false;
+                    }
                 }
 
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');

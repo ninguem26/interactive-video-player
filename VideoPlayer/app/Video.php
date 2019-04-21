@@ -13,6 +13,11 @@ class Video extends Model
         return $this->hasMany('App\VideoContent', 'video_id');
     }
 
+    public function interactions()
+    {
+        return $this->hasMany('App\Interaction', 'video_id');
+    }
+
     public function getDurationString()
     {
         $seconds = $this->duration;

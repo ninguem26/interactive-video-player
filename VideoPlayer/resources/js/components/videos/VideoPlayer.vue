@@ -28,7 +28,7 @@
                     <h6>
                         {{ mark.data.title }}
                         <small class="card-subtitle mb-2 text-muted">
-                            {{ JSON.parse(mark.options).start_at }}
+                            {{ timeString(JSON.parse(mark.options).start_at) }}
                         </small>
                     </h6>
                 </button>
@@ -125,6 +125,14 @@
                 }
 
                 return markId;
+            },
+            timeString(time) {
+                var t = "";
+
+                var hours = time/3600;
+                var minutes = (hours - parseInt(hours)) * 60;
+                var seconds = (minutes - parseInt(minutes)) * 60;
+                return parseInt(minutes) + ":" + parseInt(seconds);
             }
         },
         created() {

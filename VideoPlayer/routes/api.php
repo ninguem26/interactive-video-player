@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // Videos routes
 Route::apiResource('videos', 'API\VideosController');
+Route::get('videos/{id}/visualization', 'API\VideosController@generateDashboard');
 
 // Contents routes
 Route::apiResource('video_contents', 'API\VideoContentsController');
