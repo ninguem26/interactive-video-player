@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 
 import App from './components/App';
 import Welcome from './components/Welcome';
+import Feedback from './components/Feedback';
 import VideoComponent from './components/videos/VideoComponent';
 import VideoList from './components/videos/VideoList';
 import VideoPlayer from './components/videos/VideoPlayer';
@@ -23,6 +24,7 @@ import InteractionsByTypePlot from './components/plots/InteractionsByTypePlot';
 import InteractionsByTimePlot from './components/plots/InteractionsByTimePlot';
 import CorrectlyDonePlot from './components/plots/CorrectlyDonePlot';
 import AlternativesSelectedPlot from './components/plots/AlternativesSelectedPlot';
+import ViewsBySectionPlot from './components/plots/ViewsBySectionPlot';
 
 //Vue.component('welcome', Welcome);
 Vue.component('video-page', VideoPage);
@@ -37,6 +39,7 @@ Vue.component('interactions-by-type', InteractionsByTypePlot);
 Vue.component('interactions-by-time', InteractionsByTimePlot);
 Vue.component('correctly-done', CorrectlyDonePlot);
 Vue.component('alternatives-selected', AlternativesSelectedPlot);
+Vue.component('views-by-section', ViewsBySectionPlot);
 
 const router = new VueRouter({
     mode: 'history',
@@ -45,6 +48,11 @@ const router = new VueRouter({
             path: '/',
             name: 'welcome',
             component: Welcome
+        },
+        {
+            path: '/feedback',
+            name: 'feedback',
+            component: Feedback
         },
         {
             path: '/videos',

@@ -28,6 +28,8 @@
                         </div>
                         <label for="question">Aparecer em</label>
                         <input v-model="content.startAt" type="number" min="0" class="form-control" id="question" placeholder="Digite a questão">
+                        <label for="question">Questão de opinião</label>
+                        <input type="checkbox" aria-label="Opinião">
                         <label for="question">Obrigatório</label>
                         <input v-model="problem.obligatory" type="checkbox" aria-label="Obrigatório">
                         <button @click="confirm" class="btn btn-outline-primary btn-block">
@@ -43,6 +45,8 @@
                     <input v-model="content.startAt" type="number" min="0" class="form-control" id="start_at" placeholder="Digite o tempo inicial">
                     <label for="duration">Duração</label>
                     <input v-model="content.duration" type="number" min="0" class="form-control" id="duration" placeholder="Digite o tempo de duração">
+                    <label for="question">Interromper reprodução</label>
+                    <input v-model="anotation.obligatory" type="checkbox" aria-label="Interromper reprodução">
                     <button @click="confirm" class="btn btn-outline-primary btn-block">
                         Confirmar
                     </button>
@@ -91,11 +95,14 @@
                         <h5 class="card-title">Anotação</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ content.startAt }} - {{ endAt() }}</h6>
                         <p class="card-text">{{ anotation.text }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Interromper reprodução</h6>
+                        <p v-if="anotation.obligatory" class="card-text">Sim</p>
+                        <p v-else class="card-text">Não</p>
                     </div>
                 </div>
                 <div v-else-if="content.type == 'mark'">
                     <div class="card-body">
-                        <h5 class="card-title">Marcação</h5>
+                        <h5 class="card-title">Marcação de Seção</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ content.startAt }}</h6>
                         <p class="card-text">{{ mark.title }}</p>
                     </div>
@@ -127,7 +134,8 @@
                     obligatory: false
                 },
                 anotation: {
-                    text: ""
+                    text: "",
+                    obligatory: false
                 },
                 mark: {
                     title: ""
@@ -172,6 +180,7 @@
                         options: {
                             start_at: this.content.startAt,
                             duration: this.content.duration,
+                            obligatory: this.anotation.obligatory
                         },
                         text: this.anotation.text
                     }

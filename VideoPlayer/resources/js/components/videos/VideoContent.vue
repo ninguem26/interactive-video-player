@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button @click="submitAnswer" class="btn btn-success" :disabled="selectedAlternative == 0">
+                    <button @click="submitAnswer" class="btn btn-success" :disabled="selectedAlternative == 0 || correct">
                         Responder
                     </button>
                     <button @click="skipQuestion" class="btn btn-warning" :disabled="!canSkip">
@@ -40,10 +40,17 @@
     <div v-else-if="anotation" class="video-content">
         <div class="card" style="background-color: #FFD93C;">
             <div class="card-body">
-                {{ data.text }}
                 <button @click="dismiss" type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                <div>
+                    {{ data.text }}
+                </div>
+                <div>
+                    <button v-if="JSON.parse(options).obligatory" @click="dismiss" class="btn btn-primary">
+                        <i class="fa fa-play"></i> Continuar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -101,6 +108,11 @@
             anotation: function () {
                 if(this.anotation) {
                     document.dispatchEvent(this.events.showAnotation);
+                    if(JSON.parse(this.options).obligatory) {
+                        if (this.$parent.isPlaying()) {
+                            this.$parent.pause();
+                        }
+                    }
                 } else {
                     document.dispatchEvent(this.events.hideAnotation);
                 }
@@ -108,7 +120,6 @@
             mark: function () {
                 if(this.mark) {
                     this.$parent.actualMark = this.id;
-                    console.log(this.id);
                     var enterMark = new CustomEvent('entermark', {
                         detail: {
                             video_mark_id: this.id
@@ -140,7 +151,6 @@
                 if(answer > this.alternatives.length) {
                     this.correct = true;
                 } else {
-                    console.log("AAA")
                     if(this.selectedAlternative == answer) {
                         this.correct = true;
                     } else {
@@ -183,6 +193,12 @@
                         anotation_id: this.data.id
                     }
                 });
+
+                if(JSON.parse(this.options).obligatory) {
+                    if(this.$parent.isPaused()) {
+                        this.$parent.play();
+                    }
+                }
 
                 this.active = false;
                 document.dispatchEvent(dismissAnotation);

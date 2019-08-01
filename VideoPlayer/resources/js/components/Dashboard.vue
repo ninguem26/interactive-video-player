@@ -5,6 +5,7 @@
                 <h3>Interações</h3>
                 <interactions-by-type :data="interactionByType"></interactions-by-type>
                 <interactions-by-time :data="interactionByTime"></interactions-by-time>
+                <views-by-section :data="viewsBySection"></views-by-section>
                 <h3>Questões</h3>
                 <question-visualization :problems="problemData"></question-visualization>
             </div>
@@ -28,6 +29,7 @@
             this.$http.get('/api/videos/' + this.id + '/visualization').then(({ data }) => {
                 this.interactionByType = data.interactionsByType;
                 this.interactionByTime = data.interactionsByTime;
+                this.viewsBySection = data.viewsBySection;
                 this.problemData = data.problemsData;
                 this.show = true;
             });

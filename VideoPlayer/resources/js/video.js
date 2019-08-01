@@ -44,6 +44,7 @@ export function init(playerId, receivedVideoId, receivedSessionId) {
                 y: mousePos.y
             }
         });
+        console.log('Play');
         submitToServer(interactionData);
     });
 
@@ -142,7 +143,7 @@ export function init(playerId, receivedVideoId, receivedSessionId) {
 
     document.addEventListener('alternativeselected', function(e) {
         var interactionData = setDataToSend("alternativeselected", {
-            aleternative:e.detail.alternative,
+            aleternative: e.detail.alternative,
             mousePos: {
                 x: mousePos.x,
                 y: mousePos.y

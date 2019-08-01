@@ -148,8 +148,6 @@
                 videoCollector.player.on('timeupdate', function() {
                     self.currentTime = videoCollector.player.currentTime;
                 });
-                console.log(this.sessionId);
-
             });
         },
     }

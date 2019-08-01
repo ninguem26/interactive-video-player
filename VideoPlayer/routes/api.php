@@ -41,3 +41,6 @@ Route::get('interactions/videos/{id}', 'API\InteractionsController@getByVideoId'
 
 // Session routes
 Route::apiResource('session', 'API\SessionController');
+
+// Session routes
+Route::apiResource('feedback', 'API\FeedbackController');

@@ -59,19 +59,22 @@ class VideosController extends Controller
     {
         $video = Video::find($id);
 
-        $interactions = $video->interactions;
+        $interactions = $video->interactions->where('created_at', '>=', '2019-04-24 17:45:00');
         $contents = $video->contents;
 
         $problems = $contents->where('type', 'problem');
+        $marks = $contents->where('type', 'mark');
 
         $interactionsByType = $this->qntInteractionsByType($id);
         $problemsData = $this->problemsData($problems);
         $interactionsByTime = $this->interactionsByTime($interactions, $video->duration, 5);
+        $qntViewsBySection = $this->qntViewsBySection($marks, $interactions->where('type', 'entermark'));
 
         return response()->json([
             'interactionsByType' => $interactionsByType,
             'problemsData' => $problemsData,
-            'interactionsByTime' => $interactionsByTime
+            'interactionsByTime' => $interactionsByTime,
+            'viewsBySection' => $qntViewsBySection
         ]);
     }
 
@@ -83,8 +86,9 @@ class VideosController extends Controller
         $interactions =  DB::table('interactions')
             ->select('type', DB::raw('count(*) as total'))
             ->where('video_id', $id)
+            ->where('created_at', '>=', '2019-04-24 17:45:00')
             ->groupBy('type')
-            ->orderBy('total')
+            ->orderBy('total', 'desc')
             ->get();
 
         foreach ($interactions as $i) {
@@ -182,7 +186,7 @@ class VideosController extends Controller
 
         foreach($problems as $problem) {
             $data = $problem->data;
-            $answers = $data->video_answers;
+            $answers = $data->video_answers->where('created_at', '>=', '2019-04-24 17:45:00');
             $corrects = 0;
             $qnt_selected_alternatives = array_fill(0, count(json_decode($data->alternatives)), 0);
             $alternativesLabel = array();
@@ -216,6 +220,24 @@ class VideosController extends Controller
             }
             array_push($labels, $i . '-' . ($j));
             array_push($values, $interactions->whereBetween('time',[$i, $j])->count());
+        }
+        return ['labels' => $labels, 'data' => $values];
+    }
+
+    function qntViewsBySection($marks, $interactions) {
+        $labels = array();
+        $values = array();
+
+        foreach($marks as $mark) {
+            $views = 0;
+            array_push($labels, $mark->data->title);
+
+            foreach($interactions as $i) {
+                if(json_decode($i->data)->video_mark_id == $mark->data->id) {
+                    $views++;
+                }
+            }
+            array_push($values, $views);
         }
         return ['labels' => $labels, 'data' => $values];
     }
